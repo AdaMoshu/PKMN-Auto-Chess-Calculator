@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Auto Chess Unit Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: black;
+            color: white;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        input, select, button {
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%; /* Ensure inputs fill the available space */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            background-color: #555;
+            color: white;
+            border: 1px solid #777;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #444;
+            border: 1px solid #666;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #888;
+            border-radius: 5px;
+            background-color: #222;
+        }
+        .hidden {
+            display: none;
+        }
+        .input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        #bonusChance {
+            flex: 1; /* Allows the bonusChance input to take up available space */
+            padding-right: 10px; /* Add space for the percentage symbol */
+            box-sizing: border-box; /* Ensure padding does not affect total width */
+        }
+        .percentage-symbol {
+            position: absolute;
+            right: 550px; /* Adjust as needed */
+            transform: translateY(-25%);
+            color: white;
+            pointer-events: none; /* Ensure clicks go to the input field */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pokémon Auto Chess Unit Calculator</h1>
+        <form id="calculator-form">
+            <label for="level">Level :</label>
+            <select id="level">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+            </select>
+
+            <label for="unitType">Unit Type :</label>
+            <select id="unitType">
+                <option value="Common">Common</option>
+                <option value="Uncommon">Uncommon</option>
+                <option value="Rare">Rare</option>
+                <option value="Epic">Epic</option>
+                <option value="Ultra">Ultra</option>
+            </select>
+
+            <label for="includeAdditionals">Include Additionals :</label>
+            <select id="includeAdditionals">
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+            </select>
+
+            <label for="starRating">Star Rating :</label>
+            <select id="starRating">
+                <option value="2">2 Star</option>
+                <option value="3">3 Star</option>
+            </select>
+
+            <div class="hidden">
+                <label for="unitPool">Unit Pool :</label>
+                <input type="number" id="unitPool" readonly>
+                <label for="totalPool">Total Pool :</label>
+                <input type="number" id="totalPool" readonly>
+                <input type="number" id="slots" value="6" readonly>
+            </div>
+
+            <label for="bonusChance">Wild Chance :</label>
+            <div class="input-container">
+                <input type="number" id="bonusChance" step="1" value="0">
+                <span class="percentage-symbol">%</span>
+            </div>
+
+            <label for="rolls">Rolls :</label>
+            <input type="number" id="rolls" value="0">
+
+            <label for="unitsOut">Units Out :</label>
+            <input type="number" id="unitsOut" value="0">
+
+            <label for="totalOut">Total Out :</label>
+            <input type="number" id="totalOut" value="0">
+        </form>
+
+        <div id="result" class="result"></div>
+
+    </div>
+
+    <script>
+        const levelWeights = [
+            { Common: 1, Uncommon: 0, Rare: 0, Epic: 0, Ultra: 0 },
+            { Common: 1, Uncommon: 0, Rare: 0, Epic: 0, Ultra: 0 },
+            { Common: 0.7, Uncommon: 0.3, Rare: 0, Epic: 0, Ultra: 0 },
+            { Common: 0.55, Uncommon: 0.35, Rare: 0.1, Epic: 0, Ultra: 0 },
+            { Common: 0.4, Uncommon: 0.38, Rare: 0.2, Epic: 0.02, Ultra: 0 },
+            { Common: 0.25, Uncommon: 0.4, Rare: 0.3, Epic: 0.05, Ultra: 0 },
+            { Common: 0.16, Uncommon: 0.33, Rare: 0.35, Epic: 0.15, Ultra: 0.01 },
+            { Common: 0.11, Uncommon: 0.27, Rare: 0.35, Epic: 0.22, Ultra: 0.05 },
+            { Common: 0.05, Uncommon: 0.2, Rare: 0.35, Epic: 0.3, Ultra: 0.1 }
+        ];
+
+        const poolTotals = [
+            { Common: 587, Uncommon: 373, Rare: 315, Epic: 238, Ultra: 140 },
+            { Common: 587, Uncommon: 477, Rare: 387, Epic: 294, Ultra: 140 }
+        ];
+
+        const unitCopies = [
+            { Common: 18, Uncommon: 13, Rare: 9, Epic: 7, Ultra: 5 },
+            { Common: 29, Uncommon: 22, Rare: 18, Epic: 14, Ultra: 10 }
+        ];
+
+        function updatePools() {
+            const unitType = document.getElementById('unitType').value;
+            const includeAdditionals = document.getElementById('includeAdditionals').value === 'true';
+            const starRating = parseInt(document.getElementById('starRating').value);
+            const poolIndex = includeAdditionals ? 1 : 0;
+            const copiesIndex = starRating - 2;
+            const unitPoolValue = unitCopies[copiesIndex][unitType] || 0;
+            const totalPoolValue = poolTotals[poolIndex][unitType] || 0;
+            document.getElementById('unitPool').value = unitPoolValue;
+            document.getElementById('totalPool').value = totalPoolValue;
+            calculateChance();
+        }
+
+        function calculateOneRollChance(weight, unitPool, unitsOut, totalPool, totalOut, bonusChance) {
+            const Chance = weight + bonusChance;
+            const effectivePool = unitPool - unitsOut;
+            const effectiveTotalPool = totalPool - totalOut;
+            if (effectiveTotalPool <= 0) return 0;
+            return (effectivePool / effectiveTotalPool) * Chance;
+        }
+
+        function calculateSingleUnitChance(level, unitType, unitPool, totalPool, bonusChance, rolls, unitsOut, totalOut) {
+            const weights = levelWeights[level - 1];
+            const weight = weights[unitType] || 0;
+            const oneRollChance = calculateOneRollChance(weight, unitPool, unitsOut, totalPool, totalOut, bonusChance);
+            const notInOneSlot = 1 - oneRollChance;
+            const notInAnySlots = Math.pow(notInOneSlot, 6); // Slots is always 6
+            const unlucky = Math.pow(notInAnySlots, rolls);
+            const lucky = 1 - unlucky;
+            const unluckyPercentage = (unlucky * 100).toFixed(2) + '%';
+            const luckyPercentage = (lucky * 100).toFixed(2) + '%';
+            return {
+                level: level,
+                unitType: unitType,
+                UnitOut: unitsOut,
+                TotalOut: totalOut,
+                rolls: rolls,
+                Miss: unluckyPercentage,
+                Hit: luckyPercentage
+            };
+        }
+
+        function calculateChance() {
+            const level = parseInt(document.getElementById('level').value);
+            const unitType = document.getElementById('unitType').value;
+            const unitPool = parseFloat(document.getElementById('unitPool').value);
+            const totalPool = parseFloat(document.getElementById('totalPool').value);
+            const bonusChance = parseFloat(document.getElementById('bonusChance').value);
+            const rolls = parseInt(document.getElementById('rolls').value);
+            const unitsOut = parseInt(document.getElementById('unitsOut').value);
+            const totalOut = parseInt(document.getElementById('totalOut').value);
+
+            if (isNaN(unitPool) || isNaN(totalPool) || isNaN(bonusChance) || isNaN(rolls) || isNaN(unitsOut) || isNaN(totalOut)) {
+                document.getElementById('result').innerHTML = 'Invalid input values';
+                return;
+            }
+
+            const singleUnitChance = calculateSingleUnitChance(level, unitType, unitPool, totalPool, bonusChance, rolls, unitsOut, totalOut);
+            document.getElementById('result').innerHTML = `<pre>${JSON.stringify(singleUnitChance, null, 2)}</pre>`;
+        }
+
+        function setupEventListeners() {
+            const inputs = ['level', 'unitType', 'includeAdditionals', 'starRating', 'bonusChance', 'rolls', 'unitsOut', 'totalOut'];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', () => {
+                    updatePools(); // Update hidden pool values before calculation
+                });
+            });
+        }
+
+        setupEventListeners();
+        updatePools(); // Initial pool values and calculation
+    </script>
+</body>
+</html>
