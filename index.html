@@ -167,7 +167,7 @@
         }
 
         function calculateOneRollChance(weight, unitPool, unitsOut, totalPool, totalOut, bonusChance) {
-            const Chance = weight + bonusChance;
+            const Chance = weight + (bonusChance / 100);
             const effectivePool = unitPool - unitsOut;
             const effectiveTotalPool = totalPool - totalOut;
             if (effectiveTotalPool <= 0) return 0;
