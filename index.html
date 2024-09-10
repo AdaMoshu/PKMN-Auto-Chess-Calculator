@@ -12,17 +12,46 @@
             color: white;
         }
         .container {
-            max-width: 600px;
+            max-width: 1200px;
             margin: auto;
             background-color: #333;
             padding: 20px;
             border-radius: 5px;
+            display: flex;
+            gap: 20px;
+        }
+        .form-container {
+            flex: 1;
+        }
+        .graph-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .chart-section {
+            margin-top: 75px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .result {
+            font-size: 15px;
+            margin-top: 20px;
+            padding: 10px;
+            color: white;
+            background-color: transparent; 
+            border: none;
+            position: relative; 
+            top: 0; 
+            left: 0; 
         }
         input, select, button {
             margin-bottom: 10px;
             padding: 8px;
-            width: 100%; /* Ensure inputs fill the available space */
-            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            width: 100%;
+            box-sizing: border-box;
             background-color: #555;
             color: white;
             border: 1px solid #777;
@@ -34,101 +63,96 @@
             background-color: #444;
             border: 1px solid #666;
         }
-        .result {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #888;
-            border-radius: 5px;
-            background-color: #222;
-        }
         .hidden {
             display: none;
         }
-        .input-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-        #bonusChance {
-            flex: 1; /* Allows the bonusChance input to take up available space */
-            padding-right: 10px; /* Add space for the percentage symbol */
-            box-sizing: border-box; /* Ensure padding does not affect total width */
-        }
-        .percentage-symbol {
-            position: absolute;
-            right: 550px; /* Adjust as needed */
-            transform: translateY(-25%);
-            color: white;
-            pointer-events: none; /* Ensure clicks go to the input field */
+        canvas {
+            width: 100% !important;
+            height: 400px !important;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Pokémon Auto Chess Unit Calculator</h1>
-        <form id="calculator-form">
-            <label for="level">Level :</label>
-            <select id="level">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-            </select>
+        <div class="form-container">
+            <h1>Pokémon Auto Chess Unit Calculator</h1>
+            <form id="calculator-form">
+                <label for="level">Level :</label>
+                <select id="level">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                </select>
 
-            <label for="unitType">Unit Type :</label>
-            <select id="unitType">
-                <option value="Common">Common</option>
-                <option value="Uncommon">Uncommon</option>
-                <option value="Rare">Rare</option>
-                <option value="Epic">Epic</option>
-                <option value="Ultra">Ultra</option>
-            </select>
+                <label for="unitType">Unit Type :</label>
+                <select id="unitType">
+                    <option value="Common">Common</option>
+                    <option value="Uncommon">Uncommon</option>
+                    <option value="Rare">Rare</option>
+                    <option value="Epic">Epic</option>
+                    <option value="Ultra">Ultra</option>
+                </select>
 
-            <label for="includeAdditionals">Include Additionals :</label>
-            <select id="includeAdditionals">
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-            </select>
+                <label for="includeAdditionals">Include Additionals :</label>
+                <select id="includeAdditionals">
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
+                </select>
 
-            <label for="starRating">Star Rating :</label>
-            <select id="starRating">
-                <option value="2">2 Star</option>
-                <option value="3">3 Star</option>
-            </select>
+                <label for="starRating">Star Rating :</label>
+                <select id="starRating">
+                    <option value="2">2 Star</option>
+                    <option value="3">3 Star</option>
+                </select>
 
-            <div class="hidden">
-                <label for="unitPool">Unit Pool :</label>
-                <input type="number" id="unitPool" readonly>
-                <label for="totalPool">Total Pool :</label>
-                <input type="number" id="totalPool" readonly>
-                <input type="number" id="slots" value="6" readonly>
-            </div>
-
-            <label for="bonusChance">Wild Chance :</label>
-            <div class="input-container">
+                <label for="bonusChance">Wild Chance :</label>
                 <input type="number" id="bonusChance" step="1" value="0">
-                <span class="percentage-symbol">%</span>
+
+                <label for="rolls">Rolls :</label>
+                <input type="number" id="rolls" value="0">
+
+                <label for="unitsOut">Units Out :</label>
+                <input type="number" id="unitsOut" value="0">
+
+                <label for="totalOut">Total Out :</label>
+                <input type="number" id="totalOut" value="0">
+
+                <div class="hidden">
+                    <label for="unitPool">Unit Pool :</label>
+                    <input type="number" id="unitPool" readonly>
+
+                    <label for="totalPool">Total Pool :</label>
+                    <input type="number" id="totalPool" readonly>
+                </div>
+
+            </form>
+        </div>
+        <div class="graph-container">
+            <div class="chart-section">
+                <div id="result" class="result"></div>
+                <canvas id="chart"></canvas>
             </div>
-
-            <label for="rolls">Rolls :</label>
-            <input type="number" id="rolls" value="0">
-
-            <label for="unitsOut">Units Out :</label>
-            <input type="number" id="unitsOut" value="0">
-
-            <label for="totalOut">Total Out :</label>
-            <input type="number" id="totalOut" value="0">
-        </form>
-
-        <div id="result" class="result"></div>
-
+        </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+        function updateResultPosition(top, left) {
+            const resultElement = document.getElementById('result');
+            resultElement.style.top = top + 'px';
+            resultElement.style.left = left + 'px';
+        }
+
+        updateResultPosition(72, -30);
+    </script>
 
     <script>
         const levelWeights = [
@@ -159,10 +183,15 @@
             const starRating = parseInt(document.getElementById('starRating').value);
             const poolIndex = includeAdditionals ? 1 : 0;
             const copiesIndex = starRating - 2;
+
+            const unitPoolElement = document.getElementById('unitPool');
+            const totalPoolElement = document.getElementById('totalPool');
+
             const unitPoolValue = unitCopies[copiesIndex][unitType] || 0;
             const totalPoolValue = poolTotals[poolIndex][unitType] || 0;
-            document.getElementById('unitPool').value = unitPoolValue;
-            document.getElementById('totalPool').value = totalPoolValue;
+            unitPoolElement.value = unitPoolValue;
+            totalPoolElement.value = totalPoolValue;
+
             calculateChance();
         }
 
@@ -174,25 +203,22 @@
             return (effectivePool / effectiveTotalPool) * Chance;
         }
 
-        function calculateSingleUnitChance(level, unitType, unitPool, totalPool, bonusChance, rolls, unitsOut, totalOut) {
+        function calculateMarkovChain(level, unitType, unitPool, totalPool, bonusChance, rolls, unitsOut, totalOut) {
             const weights = levelWeights[level - 1];
             const weight = weights[unitType] || 0;
             const oneRollChance = calculateOneRollChance(weight, unitPool, unitsOut, totalPool, totalOut, bonusChance);
-            const notInOneSlot = 1 - oneRollChance;
-            const notInAnySlots = Math.pow(notInOneSlot, 6); // Slots is always 6
-            const unlucky = Math.pow(notInAnySlots, rolls);
-            const lucky = 1 - unlucky;
-            const unluckyPercentage = (unlucky * 100).toFixed(2) + '%';
-            const luckyPercentage = (lucky * 100).toFixed(2) + '%';
-            return {
-                level: level,
-                unitType: unitType,
-                UnitOut: unitsOut,
-                TotalOut: totalOut,
-                rolls: rolls,
-                Miss: unluckyPercentage,
-                Hit: luckyPercentage
-            };
+            const probabilities = { success: [], failure: [] };
+
+            for (let i = 0; i <= rolls; i++) {
+                const notInOneSlot = 1 - oneRollChance;
+                const notInAnySlots = Math.pow(notInOneSlot, 6); // 6 slots
+                const unlucky = Math.pow(notInAnySlots, i); // No unit in i rolls
+                const lucky = 1 - unlucky; // At least one unit in i rolls
+                probabilities.success.push((lucky * 100).toFixed(2)); // Convert to percentage
+                probabilities.failure.push((unlucky * 100).toFixed(2)); // Convert to percentage
+            }
+
+            return probabilities;
         }
 
         function calculateChance() {
@@ -210,9 +236,87 @@
                 return;
             }
 
-            const singleUnitChance = calculateSingleUnitChance(level, unitType, unitPool, totalPool, bonusChance, rolls, unitsOut, totalOut);
-            document.getElementById('result').innerHTML = `<pre>${JSON.stringify(singleUnitChance, null, 2)}</pre>`;
+            const markovChainProbabilities = calculateMarkovChain(level, unitType, unitPool, totalPool, bonusChance, rolls, unitsOut, totalOut);
+            const mostRecentSuccess = markovChainProbabilities.success[markovChainProbabilities.success.length - 1];
+            const mostRecentFailure = markovChainProbabilities.failure[markovChainProbabilities.failure.length - 1];
+            document.getElementById('result').innerHTML = 
+               `<pre>
+                ${mostRecentSuccess}%           ${mostRecentFailure}%
+                </pre>`;
+
+            updateChart(markovChainProbabilities);
         }
+
+        let chart;
+
+        function updateChart(probabilities) {
+    const ctx = document.getElementById('chart').getContext('2d');
+    if (chart) {
+        chart.destroy(); // Destroy the previous chart instance
+    }
+    chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Array.from({ length: probabilities.success.length }, (_, i) => `${i}`),
+            datasets: [
+                {
+                    label: 'Hit                ',
+                    data: probabilities.success,
+                    backgroundColor: '#36A2EB',
+                    borderColor: '#36A2EB',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Miss                ',
+                    data: probabilities.failure,
+                    backgroundColor: '#FF6384',
+                    borderColor: '#FF6384',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Rolls',
+                        color: 'white'
+                    },
+                    ticks: {
+                        color: 'white'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Chance (%)',
+                        color: 'white'
+                    },
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 10,
+                        color: 'white'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'white'
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.formattedValue}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
 
         function setupEventListeners() {
             const inputs = ['level', 'unitType', 'includeAdditionals', 'starRating', 'bonusChance', 'rolls', 'unitsOut', 'totalOut'];
