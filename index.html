@@ -12,13 +12,30 @@
             color: white;
         }
         .container {
-            max-width: 1200px;
+            max-width: 750px;
             margin: auto;
             background-color: #333;
             padding: 20px;
             border-radius: 5px;
             display: flex;
+            flex-direction: column;
             gap: 20px;
+            box-sizing: border-box;
+        }
+        .form-group {
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .form-group label {
+            min-width: 150px;
+            white-space: nowrap;
+        }
+        .button-group{
+            display: flex;
+            gap: 5px;
+        }
+        .toggle-button{
+            margin-right: 20px;
         }
         .form-container {
             flex: 1;
@@ -28,115 +45,183 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            position: relative;
+            margin-top: 40px;
+            width: 100%;
         }
         .chart-section {
-            margin-top: 75px;
+            margin-top: -50px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            gap: 20px;
         }
         .result {
             font-size: 15px;
-            margin-top: 20px;
-            padding: 10px;
             color: white;
-            background-color: transparent; 
-            border: none;
-            position: relative; 
-            top: 0; 
-            left: 0; 
+            position: absolute;
+            top: 62px; 
+            left: 150px; 
+            z-index: 1; 
         }
-        input, select, button {
-            margin-bottom: 10px;
-            padding: 8px;
+        input {
+            padding: 6px;
+            font-size: 14px;
             width: 100%;
             box-sizing: border-box;
             background-color: #555;
             color: white;
             border: 1px solid #777;
         }
-        button {
+        button, .toggle-button {
             padding: 10px 15px;
             font-size: 16px;
             cursor: pointer;
+            color: white;
             background-color: #444;
             border: 1px solid #666;
+        }
+        .button-group button {
+            flex: auto;
+            min-width: 60px;
+            max-width: 100px;
+            padding: 5px;
+        }
+        .button-group button.selected,
+        .toggle-button.active{
+            background-color: #888;
+            border-color: #888;
         }
         .hidden {
             display: none;
         }
         canvas {
-            width: 100% !important;
-            height: 400px !important;
+            width: 100%; /* Use full width of its container */
+            height: auto; /* Adjust height automatically */
+            max-width: 700px; /* Set a max width */
+            height: 600px; /* Set a fixed height */
+            z-index: 2; 
         }
-    </style>
+        .input-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            margin-top: 50px;
+            margin-left: 100px;
+        }
+        .input-item {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+        .input-item label {
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        .input-item input {
+            padding: 6px;
+            font-size: 14px;
+            width: 50%; /* Full width within grid cell */
+            box-sizing: border-box;
+        }
+        .star-rating{
+            display: flex;
+            gap: 5px;
+            flex-direction: row;
+            margin-top: -88px;
+            margin-left: 550px;
+            justify-content: flex-start;
+        }
+        .star-rating button{
+            color: yellow;
+        }
+        .star-rating button.selected {
+            background-color: #888;
+            border-color: #888;
+        }
+    </style>       
 </head>
+
 <body>
     <div class="container">
         <div class="form-container">
             <h1>Pokémon Auto Chess Unit Calculator</h1>
             <form id="calculator-form">
-                <label for="level">Level :</label>
-                <select id="level">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                </select>
+                <div class="form-group">
+                    <label for="level">Level :</label>
+                    <div class="button-group" id="level">
+                        <button type="button" data-value="1">1</button>
+                        <button type="button" data-value="2">2</button>
+                        <button type="button" data-value="3">3</button>
+                        <button type="button" data-value="4">4</button>
+                        <button type="button" data-value="5">5</button>
+                        <button type="button" data-value="6">6</button>
+                        <button type="button" data-value="7">7</button>
+                        <button type="button" data-value="8">8</button>
+                        <button type="button" data-value="9">9</button>
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <label for="unitType">Unit Tier :</label>
+                    <div class="button-group" id="unitType">
+                        <button type="button" data-value="Common">Common</button>
+                        <button type="button" data-value="Uncommon">Uncommon</button>
+                        <button type="button" data-value="Rare">Rare</button>
+                        <button type="button" data-value="Epic">Epic</button>
+                        <button type="button" data-value="Ultra">Ultra</button>
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <label for="includeAdditionals">Additionals :</label>
+                    <button type="button" id="includeAdditionals" class="toggle-button" data-value="false">No</button>
+                    <div class="star-rating" id="starRating">
+                        <button type="button" data-value="2">★★</button>
+                        <button type="button" data-value="3">★★★</button>
+                    </div>
+                </div>
+                
+            
+                <div class="input-container">
+                    <div class="input-item">
+                        <label for="rolls">Rolls:</label>
+                        <input type="number" id="rolls" value="15">
+                    </div>
 
-                <label for="unitType">Unit Type :</label>
-                <select id="unitType">
-                    <option value="Common">Common</option>
-                    <option value="Uncommon">Uncommon</option>
-                    <option value="Rare">Rare</option>
-                    <option value="Epic">Epic</option>
-                    <option value="Ultra">Ultra</option>
-                </select>
+                    <div class="input-item">
+                        <label for="regionalIn">Regional In Tier In:</label>
+                        <input type="number" id="regionalIn" value="0">
+                    </div>
 
-                <label for="includeAdditionals">Include Additionals :</label>
-                <select id="includeAdditionals">
-                    <option value="false">No</option>
-                    <option value="true">Yes</option>
-                </select>
+                    <div class="input-item">
+                        <label for="unitsOut">Search Unit Out:</label>
+                        <input type="number" id="unitsOut" value="0">
+                    </div>
 
-                <label for="starRating">Star Rating :</label>
-                <select id="starRating">
-                    <option value="2">2 Star</option>
-                    <option value="3">3 Star</option>
-                </select>
-
-                <label for="bonusChance">Wild Chance :</label>
-                <input type="number" id="bonusChance" step="1" value="0">
-
-                <label for="rolls">Rolls :</label>
-                <input type="number" id="rolls" value="0">
-
-                <label for="regionalIn">Regional In :</label>
-                <input type="number" id="regionalIn" value="0">
-
-                <label for="regionalOut">Regional Out :</label>
-                <input type="number" id="regionalOut" value="0">
-
-                <label for="unitsOut">Units Out :</label>
-                <input type="number" id="unitsOut" value="0">
-
-                <label for="totalOut">Total Out :</label>
-                <input type="number" id="totalOut" value="0">
-
+                    <div class="input-item">
+                        <label for="bonusChance">Wild Bonus:</label>
+                        <input type="number" id="bonusChance" step="1" value="0">
+                    </div>
+                    
+                    <div class="input-item">
+                        <label for="regionalOut">Regional In Tier Out:</label>
+                        <input type="number" id="regionalOut" value="0">
+                    </div>
+                    
+                    <div class="input-item">
+                        <label for="totalOut">Total In Tier Out:</label>
+                        <input type="number" id="totalOut" value="0">
+                    </div>
+                </div>
+            
                 <div class="hidden">
                     <label for="unitPool">Unit Pool :</label>
                     <input type="number" id="unitPool" readonly>
-
+            
                     <label for="totalPool">Total Pool :</label>
                     <input type="number" id="totalPool" readonly>
                 </div>
             </form>
+                       
         </div>
         <div class="graph-container">
             <div class="chart-section">
@@ -155,10 +240,11 @@
             resultElement.style.left = left + 'px';
         }
 
-        updateResultPosition(72, -30);
+        updateResultPosition(-58, 170);
     </script>
 
     <script>
+        // Level weight arrays
         const levelWeights = [
             { Common: 1, Uncommon: 0, Rare: 0, Epic: 0, Ultra: 0 },
             { Common: 1, Uncommon: 0, Rare: 0, Epic: 0, Ultra: 0 },
@@ -171,25 +257,35 @@
             { Common: 0.05, Uncommon: 0.2, Rare: 0.35, Epic: 0.3, Ultra: 0.1 }
         ];
 
+        // Pool totals
         const poolTotals = [
             { Common: 587, Uncommon: 373, Rare: 315, Epic: 238, Ultra: 140 },
             { Common: 587, Uncommon: 477, Rare: 387, Epic: 294, Ultra: 140 }
         ];
-
+        // Unit copies
         const unitCopies = [
             { Common: 18, Uncommon: 13, Rare: 9, Epic: 7, Ultra: 5 },
             { Common: 29, Uncommon: 22, Rare: 18, Epic: 14, Ultra: 10 }
         ];
 
+        // Update pools based on selected values
         function updatePools() {
-            const unitType = document.getElementById('unitType').value;
-            const includeAdditionals = document.getElementById('includeAdditionals').value === 'true';
-            const starRating = parseInt(document.getElementById('starRating').value);
-            const poolIndex = includeAdditionals ? 1 : 0;
-            const copiesIndex = starRating - 2;
-
+            const unitTypeElement = document.getElementById('unitType');
+            const includeAdditionalsElement = document.getElementById('includeAdditionals');
+            const starRatingElement = document.getElementById('starRating');
             const unitPoolElement = document.getElementById('unitPool');
             const totalPoolElement = document.getElementById('totalPool');
+
+            if (!unitTypeElement || !includeAdditionalsElement || !starRatingElement || !unitPoolElement || !totalPoolElement) {
+                console.error('One or more required elements are missing.');
+                return;
+            }
+
+            const unitType = unitTypeElement.querySelector('.selected').getAttribute('data-value');
+            const includeAdditionals = includeAdditionalsElement.getAttribute('data-value') === 'true';
+            const starRating = parseInt(starRatingElement.querySelector('.selected').getAttribute('data-value'), 10);
+            const poolIndex = includeAdditionals ? 1 : 0;
+            const copiesIndex = starRating - 2;
 
             const unitPoolValue = unitCopies[copiesIndex][unitType] || 0;
             const totalPoolValue = poolTotals[poolIndex][unitType] || 0;
@@ -200,6 +296,7 @@
             calculateChance();
         }
 
+        // Calculate the chance of getting a unit
         function calculateOneRollChance(weight, unitPool, unitsOut, totalPool, totalOut, regionalIn, regionalOut, bonusChance) {
             const Chance = weight + (bonusChance / 100);
             const effectivePool = unitPool - unitsOut;
@@ -210,6 +307,7 @@
             return (effectivePool / (effectiveTotalPool + effectiveRegionalPool)) * Chance;
         }
 
+        // Calculate Markov Chain probabilities
         function calculateMarkovChain(level, unitType, unitPool, totalPool, bonusChance, rolls, unitsOut, totalOut, regionalIn, regionalOut) {
             const weights = levelWeights[level - 1];
             const weight = weights[unitType] || 0;
@@ -228,20 +326,21 @@
             return probabilities;
         }
 
+        // Calculate and display chance based on form inputs
         function calculateChance() {
-            const level = parseInt(document.getElementById('level').value);
-            const unitType = document.getElementById('unitType').value;
-            const unitPool = parseFloat(document.getElementById('unitPool').value);
-            const totalPool = parseFloat(document.getElementById('totalPool').value);
-            const bonusChance = parseFloat(document.getElementById('bonusChance').value);
-            const rolls = parseInt(document.getElementById('rolls').value);
-            const unitsOut = parseInt(document.getElementById('unitsOut').value);
-            const totalOut = parseInt(document.getElementById('totalOut').value);
-            const regionalIn = parseInt(document.getElementById('regionalIn').value);
-            const regionalOut = parseInt(document.getElementById('regionalOut').value);
+            const level = parseInt(document.querySelector('#level .selected').getAttribute('data-value'), 10);
+            const unitType = document.querySelector('#unitType .selected').getAttribute('data-value');
+            const unitPool = parseInt(document.getElementById('unitPool').value, 10);
+            const totalPool = parseInt(document.getElementById('totalPool').value, 10);
+            const bonusChance = parseFloat(document.getElementById('bonusChance').value) || 0;
+            const rolls = parseInt(document.getElementById('rolls').value, 10);
+            const unitsOut = parseInt(document.getElementById('unitsOut').value, 10);
+            const totalOut = parseInt(document.getElementById('totalOut').value, 10);
+            const regionalIn = parseInt(document.getElementById('regionalIn').value, 10);
+            const regionalOut = parseInt(document.getElementById('regionalOut').value, 10);
 
             if (isNaN(unitPool) || isNaN(totalPool) || isNaN(bonusChance) || isNaN(rolls) || isNaN(unitsOut) || isNaN(totalOut) || isNaN(regionalIn) || isNaN(regionalOut)) {
-                document.getElementById('result').innerHTML = 'Invalid input values';
+                document.getElementById('result').innerText = 'Invalid input values';
                 return;
             }
 
@@ -250,7 +349,7 @@
             const mostRecentFailure = markovChainProbabilities.failure[markovChainProbabilities.failure.length - 1];
             document.getElementById('result').innerHTML = 
                `<pre>
-                ${mostRecentSuccess}%           ${mostRecentFailure}%
+                ${mostRecentSuccess}%             ${mostRecentFailure}%
                 </pre>`;
 
             updateChart(markovChainProbabilities);
@@ -258,6 +357,7 @@
 
         let chart;
 
+        // Update the chart with new data
         function updateChart(probabilities) {
             const ctx = document.getElementById('chart').getContext('2d');
             if (chart) {
@@ -269,14 +369,14 @@
                     labels: Array.from({ length: probabilities.success.length }, (_, i) => `${i}`),
                     datasets: [
                         {
-                            label: 'Hit                ',
+                            label: 'Hit                         ',
                             data: probabilities.success,
                             backgroundColor: '#36A2EB',
                             borderColor: '#36A2EB',
                             borderWidth: 1
                         },
                         {
-                            label: 'Miss                ',
+                            label: 'Miss',
                             data: probabilities.failure,
                             backgroundColor: '#FF6384',
                             borderColor: '#FF6384',
@@ -327,18 +427,70 @@
             });
         }
 
-        function setupEventListeners() {
-            const inputs = ['level', 'unitType', 'includeAdditionals', 'starRating', 'bonusChance', 'rolls', 'unitsOut', 'totalOut', 'regionalIn', 'regionalOut'];
-            inputs.forEach(id => {
-                document.getElementById(id).addEventListener('input', () => {
-                    updatePools(); // Update hidden pool values before calculation
-                });
+        // Handle button selection
+        function setupButtonSelection() {
+            const buttonGroups = ['level', 'unitType', 'starRating'];
+
+            buttonGroups.forEach(groupId => {
+                const group = document.getElementById(groupId);
+                if (group) {
+                    group.addEventListener('click', (event) => {
+                        if (event.target.tagName === 'BUTTON') {
+                            const buttons = group.querySelectorAll('button');
+                            buttons.forEach(button => button.classList.remove('selected'));
+                            event.target.classList.add('selected');
+                            updatePools(); // Update pools and recalculate on button click
+                        }
+                    });
+                }
             });
         }
 
-        setupEventListeners();
-        updatePools(); // Initial pool values and calculation
+        function setupInputListeners() {
+            const inputs = ['#bonusChance', '#rolls', '#regionalIn', '#regionalOut', '#unitsOut', '#totalOut'];
+            inputs.forEach(selector => {
+                document.querySelector(selector).addEventListener('input', calculateChance);
+            });
+        }
+
+        function updateToggleButtonText() {
+            const toggleButton = document.getElementById('includeAdditionals');
+            if (toggleButton) {
+                const isActive = toggleButton.classList.contains('active');
+                toggleButton.textContent = isActive ? 'Yes' : 'No'; // Change button text based on its state
+            }
+        }
+
+        function setupToggleButton() {
+            const toggleButton = document.getElementById('includeAdditionals');
+            if (toggleButton) {
+                toggleButton.addEventListener('click', () => {
+                 const isActive = toggleButton.classList.toggle('active');
+                    toggleButton.setAttribute('data-value', isActive ? 'true' : 'false');
+                    updatePools();
+                    updateToggleButtonText(); // Update text on click
+                });
+                updateToggleButtonText(); // Initialize text based on default state
+            }
+        }
+
+        function initializeForm() {
+            // Set default selected buttons
+            document.querySelector('#level button[data-value="1"]').classList.add('selected');
+            document.querySelector('#unitType button[data-value="Common"]').classList.add('selected');
+            document.querySelector('#includeAdditionals').classList.remove('active');
+            document.querySelector('#starRating button[data-value="2"]').classList.add('selected');
+
+            updatePools(); // Initial pool values and calculation
+            updateToggleButtonText(); // Initialize button text
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupInputListeners();
+            setupButtonSelection();
+            setupToggleButton();
+            initializeForm();
+        });
     </script>
 </body>
 </html>
-
