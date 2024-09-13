@@ -17,7 +17,7 @@
             background-color: #333;
             padding: 20px;
             border-radius: 5px;
-            display: flex;
+            display: absolute;
             flex-direction: column;
             gap: 20px;
             box-sizing: border-box;
@@ -42,17 +42,22 @@
         }
         .graph-container {
             flex: 1;
-            display: flex;
+            display: absolute;
             flex-direction: column;
             gap: 20px;
             position: relative;
             margin-top: 40px;
             width: 100%;
+            height: 400px;
+            justify-content: center;
+            align-items: center;
         }
         .chart-section {
+            width: 100%;
+            height: 100%;
             margin-top: -50px;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 20px;
         }
         .result {
@@ -95,10 +100,11 @@
             display: none;
         }
         canvas {
+            margin-top: 10px;
             width: 100%; /* Use full width of its container */
             height: auto; /* Adjust height automatically */
-            max-width: 700px; /* Set a max width */
-            height: 600px; /* Set a fixed height */
+            max-width: 100%; /* Set a max width */
+            height: 400px; /* Set a fixed height */
             z-index: 2; 
         }
         .input-container {
@@ -119,7 +125,7 @@
         .input-item input {
             padding: 6px;
             font-size: 14px;
-            width: 50%; /* Full width within grid cell */
+            width: 50%;
             box-sizing: border-box;
         }
         .star-rating{
@@ -232,6 +238,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 
     <script>
         function updateResultPosition(top, left) {
@@ -240,7 +247,7 @@
             resultElement.style.left = left + 'px';
         }
 
-        updateResultPosition(-58, 180);
+        updateResultPosition(2, 185);
     </script>
 
     <script>
@@ -349,7 +356,7 @@
             const mostRecentFailure = markovChainProbabilities.failure[markovChainProbabilities.failure.length - 1];
             document.getElementById('result').innerHTML = 
                `<pre>
-                ${mostRecentSuccess}%             ${mostRecentFailure}%
+                ${mostRecentSuccess}%              ${mostRecentFailure}%
                 </pre>`;
 
             updateChart(markovChainProbabilities);
@@ -385,6 +392,8 @@
                     ]
                 },
                 options: {
+                    responsive: true,
+
                     scales: {
                         x: {
                             title: {
