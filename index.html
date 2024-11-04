@@ -178,13 +178,14 @@
                 </div>
             
                 <div class="form-group">
-                    <label for="includeAdditionals">Additionals :</label>
-                    <button type="button" id="includeAdditionals" class="toggle-button" data-value="false">No</button>
+                    <button type="button" id="includeAdditionals" class="toggle-button" data-value="false">Additional</button>
+                    <button type="button" id="includeWilds" class="toggle-button" data-value="false">Wild</button>
                     <div class="star-rating" id="starRating">
                         <button type="button" data-value="2">★★</button>
                         <button type="button" data-value="3">★★★</button>
                     </div>
                 </div>
+                
                 
             
                 <div class="input-container">
@@ -204,8 +205,8 @@
                     </div>
 
                     <div class="input-item">
-                        <label for="bonusChance">Wild Bonus:</label>
-                        <input type="number" id="bonusChance" step="1" value="0">
+                        <label for="wildChance">Wild Chance:</label>
+                        <input type="number" id="wildChance" step="1" value="0">
                     </div>
                     
                     <div class="input-item">
@@ -253,22 +254,25 @@
     <script>
         // Level weight arrays
         const levelWeights = [
-            { Common: 1, Uncommon: 0, Rare: 0, Epic: 0, Ultra: 0 },
-            { Common: 1, Uncommon: 0, Rare: 0, Epic: 0, Ultra: 0 },
-            { Common: 0.7, Uncommon: 0.3, Rare: 0, Epic: 0, Ultra: 0 },
-            { Common: 0.55, Uncommon: 0.35, Rare: 0.1, Epic: 0, Ultra: 0 },
-            { Common: 0.4, Uncommon: 0.38, Rare: 0.2, Epic: 0.02, Ultra: 0 },
-            { Common: 0.25, Uncommon: 0.4, Rare: 0.3, Epic: 0.05, Ultra: 0 },
-            { Common: 0.16, Uncommon: 0.33, Rare: 0.35, Epic: 0.15, Ultra: 0.01 },
-            { Common: 0.11, Uncommon: 0.27, Rare: 0.35, Epic: 0.22, Ultra: 0.05 },
-            { Common: 0.05, Uncommon: 0.2, Rare: 0.35, Epic: 0.3, Ultra: 0.1 }
+            { Common: 1, Uncommon: 0, Rare: 0, Epic: 0, Ultra: 0 }, //1
+            { Common: 1, Uncommon: 0, Rare: 0, Epic: 0, Ultra: 0 }, //2
+            { Common: 0.7, Uncommon: 0.3, Rare: 0, Epic: 0, Ultra: 0 }, //3
+            { Common: 0.55, Uncommon: 0.35, Rare: 0.1, Epic: 0, Ultra: 0 }, //4
+            { Common: 0.4, Uncommon: 0.38, Rare: 0.2, Epic: 0.02, Ultra: 0 }, //5
+            { Common: 0.25, Uncommon: 0.4, Rare: 0.3, Epic: 0.05, Ultra: 0 }, //6
+            { Common: 0.16, Uncommon: 0.33, Rare: 0.35, Epic: 0.15, Ultra: 0.01 }, //7
+            { Common: 0.11, Uncommon: 0.27, Rare: 0.35, Epic: 0.22, Ultra: 0.05 }, //8
+            { Common: 0.05, Uncommon: 0.2, Rare: 0.35, Epic: 0.3, Ultra: 0.1 } //9
         ];
 
         // Pool totals
         const poolTotals = [
-            { Common: 587, Uncommon: 373, Rare: 315, Epic: 252, Ultra: 140 },
-            { Common: 587, Uncommon: 477, Rare: 387, Epic: 308, Ultra: 140 }
+            { Common: 551, Uncommon: 321, Rare: 279, Epic: 224, Ultra: 130 }, //Total Pool
+            { Common: 551, Uncommon: 425, Rare: 351, Epic: 280, Ultra: 130 }, //Total Pool W Additionals
+            { Common: 587, Uncommon: 373, Rare: 315, Epic: 252, Ultra: 140 }, //Total Pool W Wild
+            { Common: 587, Uncommon: 477, Rare: 387, Epic: 308, Ultra: 140 }  //Total Pool W Wild & Additionals
         ];
+        
         // Unit copies
         const unitCopies = [
             { Common: 18, Uncommon: 13, Rare: 9, Epic: 7, Ultra: 5 },
@@ -279,33 +283,50 @@
         function updatePools() {
             const unitTypeElement = document.getElementById('unitType');
             const includeAdditionalsElement = document.getElementById('includeAdditionals');
+            const includeWildsElement = document.getElementById('includeWilds');
             const starRatingElement = document.getElementById('starRating');
             const unitPoolElement = document.getElementById('unitPool');
             const totalPoolElement = document.getElementById('totalPool');
 
-            if (!unitTypeElement || !includeAdditionalsElement || !starRatingElement || !unitPoolElement || !totalPoolElement) {
-                console.error('One or more required elements are missing.');
-                return;
-            }
+        if (!unitTypeElement || !includeAdditionalsElement || !includeWildsElement || !starRatingElement || !unitPoolElement || !totalPoolElement) {
+            console.error('One or more required elements are missing.');
+            return;
+        }
 
             const unitType = unitTypeElement.querySelector('.selected').getAttribute('data-value');
             const includeAdditionals = includeAdditionalsElement.getAttribute('data-value') === 'true';
+            const includeWilds = includeWildsElement.getAttribute('data-value') === 'true';
             const starRating = parseInt(starRatingElement.querySelector('.selected').getAttribute('data-value'), 10);
-            const poolIndex = includeAdditionals ? 1 : 0;
-            const copiesIndex = starRating - 2;
-
-            const unitPoolValue = unitCopies[copiesIndex][unitType] || 0;
-            const totalPoolValue = poolTotals[poolIndex][unitType] || 0;
-
-            unitPoolElement.value = unitPoolValue;
-            totalPoolElement.value = totalPoolValue;
-
-            calculateChance();
+    
+            let poolIndex = 0; // Default to total pool
+        if (includeAdditionals && includeWilds) {
+            poolIndex = 3; // Both pressed
+        } else if (includeAdditionals) {
+            poolIndex = 1; // Additionals pressed
+        } else if (includeWilds) {
+            poolIndex = 2; // Wild pressed
         }
 
+        const unitPoolValue = unitCopies[starRating - 2][unitType] || 0;
+        const totalPoolValue = poolTotals[poolIndex][unitType] || 0;
+
+        unitPoolElement.value = unitPoolValue;
+        totalPoolElement.value = totalPoolValue;
+
+        calculateChance();
+}
+
+
         // Calculate the chance of getting a unit
-        function calculateOneRollChance(weight, unitPool, unitsOut, totalPool, totalOut, regionalIn, regionalOut, bonusChance) {
-            const Chance = weight + (bonusChance / 100);
+        function calculateOneRollChance(weight, unitPool, unitsOut, totalPool, totalOut, regionalIn, regionalOut, wildChance) {
+
+            let Chance = weight;
+
+            if (wildChance !== 0 && weight !== 0) {
+                Chance = wildChance / 100; // Return wildChance as a percentage
+            }
+
+
             const effectivePool = unitPool - unitsOut;
             const effectiveRegionalPool = (unitPool * regionalIn) - regionalOut;
             const effectiveTotalPool = ((totalPool - totalOut) - unitsOut) - regionalOut;
@@ -315,10 +336,10 @@
         }
 
         // Calculate Markov Chain probabilities
-        function calculateMarkovChain(level, unitType, unitPool, totalPool, bonusChance, rolls, unitsOut, totalOut, regionalIn, regionalOut) {
+        function calculateMarkovChain(level, unitType, unitPool, totalPool, wildChance, rolls, unitsOut, totalOut, regionalIn, regionalOut) {
             const weights = levelWeights[level - 1];
             const weight = weights[unitType] || 0;
-            const oneRollChance = calculateOneRollChance(weight, unitPool, unitsOut, totalPool, totalOut, regionalIn, regionalOut, bonusChance);
+            const oneRollChance = calculateOneRollChance(weight, unitPool, unitsOut, totalPool, totalOut, regionalIn, regionalOut, wildChance);
             const probabilities = { success: [], failure: [] };
 
             for (let i = 0; i <= rolls; i++) {
@@ -339,19 +360,19 @@
             const unitType = document.querySelector('#unitType .selected').getAttribute('data-value');
             const unitPool = parseInt(document.getElementById('unitPool').value, 10);
             const totalPool = parseInt(document.getElementById('totalPool').value, 10);
-            const bonusChance = parseFloat(document.getElementById('bonusChance').value) || 0;
+            const wildChance = parseFloat(document.getElementById('wildChance').value) || 0;
             const rolls = parseInt(document.getElementById('rolls').value, 10);
             const unitsOut = parseInt(document.getElementById('unitsOut').value, 10);
             const totalOut = parseInt(document.getElementById('totalOut').value, 10);
             const regionalIn = parseInt(document.getElementById('regionalIn').value, 10);
             const regionalOut = parseInt(document.getElementById('regionalOut').value, 10);
 
-            if (isNaN(unitPool) || isNaN(totalPool) || isNaN(bonusChance) || isNaN(rolls) || isNaN(unitsOut) || isNaN(totalOut) || isNaN(regionalIn) || isNaN(regionalOut)) {
+            if (isNaN(unitPool) || isNaN(totalPool) || isNaN(wildChance) || isNaN(rolls) || isNaN(unitsOut) || isNaN(totalOut) || isNaN(regionalIn) || isNaN(regionalOut)) {
                 document.getElementById('result').innerText = 'Invalid input values';
                 return;
             }
 
-            const markovChainProbabilities = calculateMarkovChain(level, unitType, unitPool, totalPool, bonusChance, rolls, unitsOut, totalOut, regionalIn, regionalOut);
+            const markovChainProbabilities = calculateMarkovChain(level, unitType, unitPool, totalPool, wildChance, rolls, unitsOut, totalOut, regionalIn, regionalOut);
             const mostRecentSuccess = markovChainProbabilities.success[markovChainProbabilities.success.length - 1];
             const mostRecentFailure = markovChainProbabilities.failure[markovChainProbabilities.failure.length - 1];
             document.getElementById('result').innerHTML = 
@@ -456,31 +477,22 @@
         }
 
         function setupInputListeners() {
-            const inputs = ['#bonusChance', '#rolls', '#regionalIn', '#regionalOut', '#unitsOut', '#totalOut'];
+            const inputs = ['#wildChance', '#rolls', '#regionalIn', '#regionalOut', '#unitsOut', '#totalOut'];
             inputs.forEach(selector => {
                 document.querySelector(selector).addEventListener('input', calculateChance);
             });
         }
 
-        function updateToggleButtonText() {
-            const toggleButton = document.getElementById('includeAdditionals');
-            if (toggleButton) {
-                const isActive = toggleButton.classList.contains('active');
-                toggleButton.textContent = isActive ? 'Yes' : 'No'; // Change button text based on its state
-            }
-        }
+        function setupToggleButtons() {
+            const toggleButtons = [document.getElementById('includeAdditionals'), document.getElementById('includeWilds')];
 
-        function setupToggleButton() {
-            const toggleButton = document.getElementById('includeAdditionals');
-            if (toggleButton) {
+            toggleButtons.forEach(toggleButton => {
                 toggleButton.addEventListener('click', () => {
-                 const isActive = toggleButton.classList.toggle('active');
-                    toggleButton.setAttribute('data-value', isActive ? 'true' : 'false');
-                    updatePools();
-                    updateToggleButtonText(); // Update text on click
+                toggleButton.classList.toggle('active');
+                toggleButton.setAttribute('data-value', toggleButton.classList.contains('active') ? 'true' : 'false');
+                updatePools(); // Update pools when either button is clicked
                 });
-                updateToggleButtonText(); // Initialize text based on default state
-            }
+            });
         }
 
         function initializeForm() {
@@ -497,9 +509,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             setupInputListeners();
             setupButtonSelection();
-            setupToggleButton();
+            setupToggleButtons(); // Call the new setup function for both buttons
             initializeForm();
         });
+
     </script>
 </body>
 </html>
