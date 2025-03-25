@@ -257,8 +257,8 @@
             { Common: 1, Uncommon: 0, Rare: 0, Epic: 0, Ultra: 0 }, //1
             { Common: 1, Uncommon: 0, Rare: 0, Epic: 0, Ultra: 0 }, //2
             { Common: 0.7, Uncommon: 0.3, Rare: 0, Epic: 0, Ultra: 0 }, //3
-            { Common: 0.55, Uncommon: 0.35, Rare: 0.1, Epic: 0, Ultra: 0 }, //4
-            { Common: 0.4, Uncommon: 0.38, Rare: 0.2, Epic: 0.02, Ultra: 0 }, //5
+            { Common: 0.5, Uncommon: 0.4, Rare: 0.1, Epic: 0, Ultra: 0 }, //4
+            { Common: 0.36, Uncommon: 0.42, Rare: 0.2, Epic: 0.02, Ultra: 0 }, //5
             { Common: 0.25, Uncommon: 0.4, Rare: 0.3, Epic: 0.05, Ultra: 0 }, //6
             { Common: 0.16, Uncommon: 0.33, Rare: 0.35, Epic: 0.15, Ultra: 0.01 }, //7
             { Common: 0.11, Uncommon: 0.27, Rare: 0.35, Epic: 0.22, Ultra: 0.05 }, //8
@@ -267,10 +267,10 @@
 
         // Pool totals
         const poolTotals = [
-            { Common: 551, Uncommon: 321, Rare: 279, Epic: 224, Ultra: 130 }, //Total Pool
-            { Common: 551, Uncommon: 425, Rare: 351, Epic: 280, Ultra: 130 }, //Total Pool W Additionals
-            { Common: 587, Uncommon: 373, Rare: 315, Epic: 252, Ultra: 140 }, //Total Pool W Wild
-            { Common: 587, Uncommon: 477, Rare: 387, Epic: 308, Ultra: 140 }  //Total Pool W Wild & Additionals
+            { Common: 551, Uncommon: 343, Rare: 261, Epic: 238, Ultra: 130 }, //Total Pool
+            { Common: 551, Uncommon: 447, Rare: 333, Epic: 294, Ultra: 130 }, //Total Pool W Additionals
+            { Common: 587, Uncommon: 395, Rare: 297, Epic: 266, Ultra: 140 }, //Total Pool W Wild
+            { Common: 587, Uncommon: 499, Rare: 369, Epic: 322, Ultra: 140 }  //Total Pool W Wild & Additionals
         ];
         
         // Unit copies
@@ -503,7 +503,6 @@
             document.querySelector('#starRating button[data-value="2"]').classList.add('selected');
 
             updatePools(); // Initial pool values and calculation
-            updateToggleButtonText(); // Initialize button text
         }
 
         document.addEventListener('DOMContentLoaded', () => {
