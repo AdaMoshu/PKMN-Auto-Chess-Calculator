@@ -6,143 +6,169 @@
     <title>Pokémon Auto Chess Unit Calculator</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: black;
-            color: white;
-        }
-        .container {
-            max-width: 750px;
-            margin: auto;
-            background-color: #333;
-            padding: 20px;
-            border-radius: 5px;
-            display: absolute;
-            flex-direction: column;
-            gap: 20px;
-            box-sizing: border-box;
-        }
-        .form-group {
-            margin-bottom: 10px;
-            align-items: center;
-        }
-        .form-group label {
-            min-width: 150px;
-            white-space: nowrap;
-        }
-        .button-group{
-            display: flex;
-            gap: 5px;
-        }
-        .toggle-button{
-            margin-right: 20px;
-        }
-        .form-container {
-            flex: 1;
-        }
-        .graph-container {
-            flex: 1;
-            display: absolute;
-            flex-direction: column;
-            gap: 20px;
-            position: relative;
-            margin-top: 40px;
-            width: 100%;
-            height: 400px;
-            justify-content: center;
-            align-items: center;
-        }
-        .chart-section {
-            width: 100%;
-            height: 100%;
-            margin-top: -50px;
-            display: flex;
-            flex-direction: row;
-            gap: 20px;
-        }
-        .result {
-            font-size: 15px;
-            color: white;
-            position: absolute;
-            top: 62px; 
-            left: 150px; 
-            z-index: 1; 
-        }
-        input {
-            padding: 6px;
-            font-size: 14px;
-            width: 100%;
-            box-sizing: border-box;
-            background-color: #555;
-            color: white;
-            border: 1px solid #777;
-        }
-        button, .toggle-button {
-            padding: 10px 15px;
-            font-size: 16px;
-            cursor: pointer;
-            color: white;
-            background-color: #444;
-            border: 1px solid #666;
-        }
-        .button-group button {
-            flex: auto;
-            min-width: 60px;
-            max-width: 100px;
-            padding: 5px;
-        }
-        .button-group button.selected,
-        .toggle-button.active{
-            background-color: #888;
-            border-color: #888;
-        }
-        .hidden {
-            display: none;
-        }
-        canvas {
-            margin-top: 10px;
-            width: 100%; /* Use full width of its container */
-            height: auto; /* Adjust height automatically */
-            max-width: 100%; /* Set a max width */
-            height: 400px; /* Set a fixed height */
-            z-index: 2; 
-        }
-        .input-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            margin-top: 50px;
-            margin-left: 100px;
-        }
-        .input-item {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 10px;
-        }
-        .input-item label {
-            font-size: 14px;
-            margin-bottom: 3px;
-        }
-        .input-item input {
-            padding: 6px;
-            font-size: 14px;
-            width: 50%;
-            box-sizing: border-box;
-        }
-        .star-rating{
-            display: flex;
-            gap: 5px;
-            flex-direction: row;
-            margin-top: -88px;
-            margin-left: 550px;
-            justify-content: flex-start;
-        }
-        .star-rating button{
-            color: yellow;
-        }
-        .star-rating button.selected {
-            background-color: #888;
-            border-color: #888;
-        }
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: black;
+    color: white;
+}
+
+.container {
+    max-width: 750px;
+    margin: auto;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-sizing: border-box;
+}
+
+.form-group {
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.form-group label {
+    min-width: 150px;
+    white-space: nowrap;
+}
+
+.button-group {
+    display: flex;
+    gap: 5px;
+}
+
+.button-group button {
+    flex: auto;
+    min-width: 60px;
+    max-width: 100px;
+    padding: 5px;
+}
+
+.toggle-button {
+    margin-right: 20px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    color: white;
+    background-color: #444;
+    border: 1px solid #666;
+}
+
+.toggle-button.active,
+.button-group button.selected {
+    background-color: #888;
+    border-color: #888;
+}
+
+.form-container {
+    flex: 1;
+}
+
+.graph-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    margin-top: 40px;
+    width: 100%;
+    height: 400px;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-section {
+    width: 100%;
+    height: 100%;
+    margin-top: -50px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.result {
+    font-size: 15px;
+    color: white;
+    position: absolute;
+    top: -50px;
+    left: 180px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+input[type="text"],
+.input-item input {
+    padding: 6px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #555;
+    color: white;
+    border: 1px solid #777;
+}
+
+.input-item input {
+    width: 50%;
+}
+
+button {
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    color: white;
+    background-color: #444;
+    border: 1px solid #666;
+}
+
+.hidden {
+    display: none;
+}
+
+canvas {
+    margin-top: 10px;
+    width: 100%;
+    max-width: 100%;
+    height: 400px;
+    z-index: 2;
+}
+
+.input-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 50px 0 0 100px;
+}
+
+.input-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.input-item label {
+    font-size: 14px;
+    margin-bottom: 3px;
+}
+
+.star-rating {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    margin-top: -88px;
+    margin-left: 550px;
+    justify-content: flex-start;
+}
+
+.star-rating button {
+    color: yellow;
+}
+
+.star-rating button.selected {
+    background-color: #888;
+    border-color: #888;
+}
+
     </style>       
 </head>
 
@@ -231,8 +257,8 @@
                        
         </div>
         <div class="graph-container">
+            <div id="result" class="result"></div>
             <div class="chart-section">
-                <div id="result" class="result"></div>
                 <canvas id="chart"></canvas>
             </div>
         </div>
@@ -240,16 +266,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-
-    <script>
-        function updateResultPosition(top, left) {
-            const resultElement = document.getElementById('result');
-            resultElement.style.top = top + 'px';
-            resultElement.style.left = left + 'px';
-        }
-
-        updateResultPosition(2, 185);
-    </script>
 
     <script>
         // Level weight arrays
@@ -267,9 +283,9 @@
 
         // Pool totals
         const poolTotals = [
-            { Common: 551, Uncommon: 343, Rare: 261, Epic: 238, Ultra: 130 }, //Total Pool
-            { Common: 551, Uncommon: 447, Rare: 333, Epic: 294, Ultra: 130 }, //Total Pool W Additionals
-            { Common: 587, Uncommon: 395, Rare: 297, Epic: 266, Ultra: 140 }, //Total Pool W Wild
+            { Common: 486, Uncommon: 343, Rare: 261, Epic: 238, Ultra: 130 }, //Total Pool
+            { Common: 486, Uncommon: 447, Rare: 333, Epic: 294, Ultra: 130 }, //Total Pool W Additionals
+            { Common: 522, Uncommon: 395, Rare: 297, Epic: 266, Ultra: 140 }, //Total Pool W Wild
             { Common: 587, Uncommon: 499, Rare: 369, Epic: 322, Ultra: 140 }  //Total Pool W Wild & Additionals
         ];
         
